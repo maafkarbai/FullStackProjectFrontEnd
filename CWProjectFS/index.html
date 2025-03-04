@@ -18,23 +18,16 @@
         class="flex items-center p-4 justify-between mx-auto fixed top-0 w-full bg-white z-10 shadow-md"
       >
         <div class="logo flex gap-2 items-center">
-          <span class="min-w-fit">After School Activities</span>
+          <span class="min-w-fit"> After School Activities</span>
         </div>
 
-        <!-- ✅ Search Input -->
         <div class="search-box border-2 flex">
           <input
             type="search"
             v-model="searchQuery"
-            placeholder="Search by Lesson Name or Location"
-            class="p-2"
+            placeholder="Search Lessions & Locations"
+            class="p-2 w-3xs"
           />
-          <button
-            @click="clearSearch"
-            class="bg-gray-500 text-white p-2 cursor-pointer"
-          >
-            Clear
-          </button>
         </div>
 
         <div class="cart hidden" v-if="cart.length <= 0"></div>
@@ -42,57 +35,38 @@
           Checkout ({{ cart.length }})
         </div>
       </header>
-
-      <!-- ✅ Filters Section -->
-      <div class="filters mt-24 flex justify-center gap-4">
-        <select v-model="selectedLocation">
-          <option value="">All Locations</option>
-          <option
-            v-for="location in uniqueLocations"
-            :key="location"
-            :value="location"
+      <div class="pt-24 mx-auto px-4">
+        <div class="flex justify-between items-center">
+          <p
+            class="underline underline-offset-4 decoration-[8px] text-4xl max-w-[90%]"
           >
-            {{ location }}
-          </option>
-        </select>
-
-        <select v-model="selectedRating">
-          <option value="">All Ratings</option>
-          <option
-            v-for="rating in [5, 4, 3, 2, 1]"
-            :key="rating"
-            :value="rating"
-          >
-            {{ rating }} Stars & Up
-          </option>
-        </select>
-
-        <select v-model="selectedPrice">
-          <option value="">All Prices</option>
-          <option value="low">Under 20 AED</option>
-          <option value="mid">20 - 30 AED</option>
-          <option value="high">30 AED & Above</option>
-        </select>
-      </div>
-
-      <div class="pt-10">
-        <p class="underline underline-offset-4 decoration-[8px] text-4xl px-9">
-          Lessons
-        </p>
-
+            Lessons
+          </p>
+          <div class="filters">
+            <i class="fa-solid fa-filter"></i>
+            <select v-model="sortAttribute">
+              <option value="">Sort By</option>
+              <option value="LessonName">Subject</option>
+              <option value="Location">Location</option>
+              <option value="Price">Price</option>
+              <option value="Space">Availability</option>
+            </select>
+            <select v-model="sortOrder" class="p-2">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+        </div>
         <div
           class="products-grid flex flex-wrap gap-4 items-center justify-center pt-4"
         >
-          <!-- ✅ Show No Results Message -->
-          <div v-if="filteredProducts.length === 0" class="no-results">
+          <div v-if="sortedProducts.length === 0" class="no-results">
             <p class="text-xl font-semibold text-red-500">
               No lessons found. Try searching for another activity or location.
             </p>
           </div>
-
-          <!-- ✅ Display Filtered Lessons -->
           <div
-            v-for="product in filteredProducts"
+            v-for="product in sortedProducts"
             :key="product.id"
             class="product-item border-2 p-2"
           >
@@ -119,8 +93,7 @@
               }}
             </p>
             <p>
-              <span class="font-bold"> Price: </span>
-              {{ product.Price }} AED
+              <span class="font-bold"> Price: </span>{{ product.Price }} AED
             </p>
 
             <div class="card-section-2">
@@ -139,7 +112,7 @@
               <span v-else-if="product.Space < 5"
                 >Only {{ product.Space }} left!</span
               >
-              <span v-else class="text-red-700">Buy Now!</span>
+              <span v-if="product.space< 5" class="text-red-700">Buy Now!</span>
             </div>
           </div>
         </div>
@@ -155,6 +128,8 @@
           selectedLocation: "",
           selectedRating: "",
           selectedPrice: "",
+          sortAttribute: "",
+          sortOrder: "asc",
           products: [
             {
               id: 1,
@@ -201,6 +176,51 @@
               Space: 7,
               Location: "Fujairah",
             },
+            {
+              id: 6,
+              LessonName: "Yoga",
+              LessonImage: "Yoga.jpg",
+              Rating: 4,
+              Price: 10,
+              Space: 20,
+              Location: "Ras Al Khaimah",
+            },
+            {
+              id: 7,
+              LessonName: "Gardening",
+              LessonImage: "Gardening.jpg",
+              Rating: 3,
+              Price: 18,
+              Space: 9,
+              Location: "Umm Al Quwain",
+            },
+            {
+              id: 8,
+              LessonName: "Karate",
+              LessonImage: "Karate.jpg",
+              Rating: 4,
+              Price: 22,
+              Space: 6,
+              Location: "Dubai",
+            },
+            {
+              id: 9,
+              LessonName: "Painting",
+              LessonImage: "Painting.jpg",
+              Rating: 5,
+              Price: 35,
+              Space: 15,
+              Location: "Abu Dhabi",
+            },
+            {
+              id: 10,
+              LessonName: "Dancing",
+              LessonImage: "Dance.jpg",
+              Rating: 4,
+              Price: 28,
+              Space: 11,
+              Location: "Sharjah",
+            },
           ],
         },
         computed: {
@@ -210,31 +230,36 @@
             ];
           },
           filteredProducts() {
-            return this.products.filter((product) => {
-              const query = this.searchQuery.toLowerCase();
-              const matchesSearch =
-                product.LessonName.toLowerCase().includes(query) ||
-                product.Location.toLowerCase().includes(query);
-              const matchesLocation = this.selectedLocation
-                ? product.Location === this.selectedLocation
-                : true;
-              const matchesRating = this.selectedRating
-                ? product.Rating >= this.selectedRating
-                : true;
-              const matchesPrice = this.selectedPrice
-                ? (this.selectedPrice === "low" && product.Price < 20) ||
-                  (this.selectedPrice === "mid" &&
-                    product.Price >= 20 &&
-                    product.Price <= 30) ||
-                  (this.selectedPrice === "high" && product.Price > 30)
-                : true;
-              return (
-                matchesSearch &&
-                matchesLocation &&
-                matchesRating &&
-                matchesPrice
-              );
-            });
+            return this.products.filter(
+              (product) =>
+                product.LessonName.toLowerCase().includes(
+                  this.searchQuery.toLowerCase()
+                ) ||
+                product.Location.toLowerCase().includes(
+                  this.searchQuery.toLowerCase()
+                )
+            );
+          },
+          sortedProducts() {
+            let products = [...this.filteredProducts];
+            if (this.sortAttribute) {
+              products.sort((a, b) => {
+                let valueA = a[this.sortAttribute];
+                let valueB = b[this.sortAttribute];
+                if (typeof valueA === "string") {
+                  valueA = valueA.toLowerCase();
+                  valueB = valueB.toLowerCase();
+                }
+                return this.sortOrder === "asc"
+                  ? valueA > valueB
+                    ? 1
+                    : -1
+                  : valueA < valueB
+                  ? 1
+                  : -1;
+              });
+            }
+            return products;
           },
         },
         methods: {
@@ -252,6 +277,8 @@
             this.selectedLocation = "";
             this.selectedRating = "";
             this.selectedPrice = "";
+            this.sortAttribute = "";
+            this.sortOrder = "asc";
           },
         },
       });
