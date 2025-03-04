@@ -18,44 +18,79 @@
         class="flex items-center p-4 justify-between mx-auto fixed top-0 w-full bg-white z-10 shadow-md"
       >
         <div class="logo flex gap-2 items-center">
-          <i class="fa-solid fa-baseball-bat-ball"></i>
-          <span class="min-w-fit">After School Activities </span>
+          <span class="min-w-fit">After School Activities</span>
         </div>
-        <div class="search-box border-2">
+
+        <!-- ✅ Search Input -->
+        <div class="search-box border-2 flex">
           <input
             type="search"
             v-model="searchQuery"
-            placeholder="Search Lessons"
+            placeholder="Search by Lesson Name or Location"
             class="p-2"
           />
-          <button class="bg-black text-white p-2 cursor-pointer">
-            <i class="fa-solid fa-magnifying-glass"></i>
+          <button
+            @click="clearSearch"
+            class="bg-gray-500 text-white p-2 cursor-pointer"
+          >
+            Clear
           </button>
         </div>
+
         <div class="cart hidden" v-if="cart.length <= 0"></div>
-        <div class="cart" v-else>
-          <a href="#" class="hover:underline"
-            ><i class="fa-solid fa-cart-shopping"></i>Checkout({{ cart.length
-            }})</a
-          >
+        <div class="cart" v-else @click="showCart = true">
+          Checkout ({{ cart.length }})
         </div>
       </header>
 
-      <div class="pt-24">
+      <!-- ✅ Filters Section -->
+      <div class="filters mt-24 flex justify-center gap-4">
+        <select v-model="selectedLocation">
+          <option value="">All Locations</option>
+          <option
+            v-for="location in uniqueLocations"
+            :key="location"
+            :value="location"
+          >
+            {{ location }}
+          </option>
+        </select>
+
+        <select v-model="selectedRating">
+          <option value="">All Ratings</option>
+          <option
+            v-for="rating in [5, 4, 3, 2, 1]"
+            :key="rating"
+            :value="rating"
+          >
+            {{ rating }} Stars & Up
+          </option>
+        </select>
+
+        <select v-model="selectedPrice">
+          <option value="">All Prices</option>
+          <option value="low">Under 20 AED</option>
+          <option value="mid">20 - 30 AED</option>
+          <option value="high">30 AED & Above</option>
+        </select>
+      </div>
+
+      <div class="pt-10">
         <p class="underline underline-offset-4 decoration-[8px] text-4xl px-9">
           Lessons
         </p>
-        <div
-          v-if="filteredProducts.length === 0"
-          class="no-results pt-4 text-center"
-        >
-          <p class="text-xl font-semibold text-red-500">
-            No lessons found. Try searching for another activity.
-          </p>
-        </div>
+
         <div
           class="products-grid flex flex-wrap gap-4 items-center justify-center pt-4"
         >
+          <!-- ✅ Show No Results Message -->
+          <div v-if="filteredProducts.length === 0" class="no-results">
+            <p class="text-xl font-semibold text-red-500">
+              No lessons found. Try searching for another activity or location.
+            </p>
+          </div>
+
+          <!-- ✅ Display Filtered Lessons -->
           <div
             v-for="product in filteredProducts"
             :key="product.id"
@@ -117,6 +152,9 @@
         data: {
           cart: [],
           searchQuery: "",
+          selectedLocation: "",
+          selectedRating: "",
+          selectedPrice: "",
           products: [
             {
               id: 1,
@@ -163,60 +201,38 @@
               Space: 7,
               Location: "Fujairah",
             },
-            {
-              id: 6,
-              LessonName: "Yoga",
-              LessonImage: "Yoga.jpg",
-              Rating: 4,
-              Price: 10,
-              Space: 20,
-              Location: "Ras Al Khaimah",
-            },
-            {
-              id: 7,
-              LessonName: "Gardening",
-              LessonImage: "Gardening.jpg",
-              Rating: 3,
-              Price: 18,
-              Space: 9,
-              Location: "Umm Al Quwain",
-            },
-            {
-              id: 8,
-              LessonName: "Karate",
-              LessonImage: "Karate.jpg",
-              Rating: 4,
-              Price: 22,
-              Space: 6,
-              Location: "Dubai",
-            },
-            {
-              id: 9,
-              LessonName: "Painting",
-              LessonImage: "Painting.jpg",
-              Rating: 5,
-              Price: 35,
-              Space: 5,
-              Location: "Abu Dhabi",
-            },
-            {
-              id: 10,
-              LessonName: "Dancing",
-              LessonImage: "Dance.jpg",
-              Rating: 4,
-              Price: 28,
-              Space: 11,
-              Location: "Sharjah",
-            },
           ],
         },
         computed: {
+          uniqueLocations() {
+            return [
+              ...new Set(this.products.map((product) => product.Location)),
+            ];
+          },
           filteredProducts() {
             return this.products.filter((product) => {
               const query = this.searchQuery.toLowerCase();
-              return (
+              const matchesSearch =
                 product.LessonName.toLowerCase().includes(query) ||
-                product.Location.toLowerCase().includes(query)
+                product.Location.toLowerCase().includes(query);
+              const matchesLocation = this.selectedLocation
+                ? product.Location === this.selectedLocation
+                : true;
+              const matchesRating = this.selectedRating
+                ? product.Rating >= this.selectedRating
+                : true;
+              const matchesPrice = this.selectedPrice
+                ? (this.selectedPrice === "low" && product.Price < 20) ||
+                  (this.selectedPrice === "mid" &&
+                    product.Price >= 20 &&
+                    product.Price <= 30) ||
+                  (this.selectedPrice === "high" && product.Price > 30)
+                : true;
+              return (
+                matchesSearch &&
+                matchesLocation &&
+                matchesRating &&
+                matchesPrice
               );
             });
           },
@@ -225,16 +241,17 @@
           addToCart(product) {
             if (product.Space > 0) {
               product.Space--;
-              const cartItem = this.cart.find((item) => item.id === product.id);
-              if (!cartItem) {
-                this.cart.push({ ...product, quantity: 1 });
-              } else {
-                cartItem.quantity++;
-              }
+              this.cart.push(product);
             }
           },
           canAddToCart(product) {
             return product.Space > 0;
+          },
+          clearSearch() {
+            this.searchQuery = "";
+            this.selectedLocation = "";
+            this.selectedRating = "";
+            this.selectedPrice = "";
           },
         },
       });
