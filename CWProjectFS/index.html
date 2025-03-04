@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="images/CWLogo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script
+      src="https://kit.fontawesome.com/2a50566d3f.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>After School Activities</title>
+  </head>
+  <body>
+    <div id="app">
+      <header
+        class="flex items-center p-4 justify-between mx-auto fixed top-0 w-full bg-white z-10 shadow-md"
+      >
+        <div class="logo flex gap-2 items-center">
+          <i class="fa-solid fa-baseball-bat-ball"></i>
+          <span class="min-w-fit">After School Activities </span>
+        </div>
+        <div class="search-box border-2">
+          <input
+            type="search"
+            v-model="searchQuery"
+            placeholder="Search Lessons"
+            class="p-2"
+          />
+          <button class="bg-black text-white p-2 cursor-pointer">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <div class="cart hidden" v-if="cart.length <= 0"></div>
+        <div class="cart" v-else>
+          <a href="#" class="hover:underline"
+            ><i class="fa-solid fa-cart-shopping"></i>Checkout({{ cart.length
+            }})</a
+          >
+        </div>
+      </header>
+
+      <div class="pt-24">
+        <p class="underline underline-offset-4 decoration-[8px] text-4xl px-9">
+          Lessons
+        </p>
+        <div
+          v-if="filteredProducts.length === 0"
+          class="no-results pt-4 text-center"
+        >
+          <p class="text-xl font-semibold text-red-500">
+            No lessons found. Try searching for another activity.
+          </p>
+        </div>
+        <div
+          class="products-grid flex flex-wrap gap-4 items-center justify-center pt-4"
+        >
+          <div
+            v-for="product in filteredProducts"
+            :key="product.id"
+            class="product-item border-2 p-2"
+          >
+            <div class="card-section">
+              <img
+                class="object-cover w-64 h-64 mx-auto"
+                v-bind:src="'images/' + product.LessonImage"
+              />
+              <h2 v-text="product.LessonName" class="text-2xl text-center"></h2>
+            </div>
+            <div class="reviews-container flex justify-center">
+              <span v-for="n in product.Rating"
+                ><i class="fa-solid fa-star"></i
+              ></span>
+              <span v-for="n in 5 - product.Rating"
+                ><i class="fa-regular fa-star"></i
+              ></span>
+            </div>
+            <p>
+              <span class="font-bold">Location: </span>{{ product.Location }}
+            </p>
+            <p>
+              <span class="font-bold">Available Items:</span> {{ product.Space
+              }}
+            </p>
+            <p>
+              <span class="font-bold"> Price: </span>
+              {{ product.Price }} AED
+            </p>
+
+            <div class="card-section-2">
+              <button
+                class="addToCart border-2 p-2 hover:bg-black hover:text-white cursor-pointer"
+                v-on:click="addToCart(product)"
+                v-if="canAddToCart(product)"
+              >
+                Add to cart
+              </button>
+              <button class="addToCart border-2 p-2" disabled v-else>
+                Add to cart
+              </button>
+
+              <span v-if="product.Space <= 0">Bookings Full</span>
+              <span v-else-if="product.Space < 5"
+                >Only {{ product.Space }} left!</span
+              >
+              <span v-else class="text-red-700">Buy Now!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          cart: [],
+          searchQuery: "",
+          products: [
+            {
+              id: 1,
+              LessonName: "Pottery",
+              LessonImage: "Pottery.png",
+              Rating: 4,
+              Price: 20,
+              Space: 10,
+              Location: "Dubai",
+            },
+            {
+              id: 2,
+              LessonName: "Piano",
+              LessonImage: "Piano.jpg",
+              Rating: 5,
+              Price: 30,
+              Space: 5,
+              Location: "Abu Dhabi",
+            },
+            {
+              id: 3,
+              LessonName: "Cricket",
+              LessonImage: "Cricket.jpg",
+              Rating: 3,
+              Price: 25,
+              Space: 8,
+              Location: "Sharjah",
+            },
+            {
+              id: 4,
+              LessonName: "Swimming",
+              LessonImage: "Swimming.jpg",
+              Rating: 4,
+              Price: 15,
+              Space: 12,
+              Location: "Ajman",
+            },
+            {
+              id: 5,
+              LessonName: "Coding",
+              LessonImage: "Coding.jpg",
+              Rating: 5,
+              Price: 40,
+              Space: 7,
+              Location: "Fujairah",
+            },
+            {
+              id: 6,
+              LessonName: "Yoga",
+              LessonImage: "Yoga.jpg",
+              Rating: 4,
+              Price: 10,
+              Space: 20,
+              Location: "Ras Al Khaimah",
+            },
+            {
+              id: 7,
+              LessonName: "Gardening",
+              LessonImage: "Gardening.jpg",
+              Rating: 3,
+              Price: 18,
+              Space: 9,
+              Location: "Umm Al Quwain",
+            },
+            {
+              id: 8,
+              LessonName: "Karate",
+              LessonImage: "Karate.jpg",
+              Rating: 4,
+              Price: 22,
+              Space: 6,
+              Location: "Dubai",
+            },
+            {
+              id: 9,
+              LessonName: "Painting",
+              LessonImage: "Painting.jpg",
+              Rating: 5,
+              Price: 35,
+              Space: 5,
+              Location: "Abu Dhabi",
+            },
+            {
+              id: 10,
+              LessonName: "Dancing",
+              LessonImage: "Dance.jpg",
+              Rating: 4,
+              Price: 28,
+              Space: 11,
+              Location: "Sharjah",
+            },
+          ],
+        },
+        computed: {
+          filteredProducts() {
+            return this.products.filter((product) => {
+              const query = this.searchQuery.toLowerCase();
+              return (
+                product.LessonName.toLowerCase().includes(query) ||
+                product.Location.toLowerCase().includes(query)
+              );
+            });
+          },
+        },
+        methods: {
+          addToCart(product) {
+            if (product.Space > 0) {
+              product.Space--;
+              const cartItem = this.cart.find((item) => item.id === product.id);
+              if (!cartItem) {
+                this.cart.push({ ...product, quantity: 1 });
+              } else {
+                cartItem.quantity++;
+              }
+            }
+          },
+          canAddToCart(product) {
+            return product.Space > 0;
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
