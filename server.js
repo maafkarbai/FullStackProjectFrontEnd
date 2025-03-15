@@ -1,7 +1,5 @@
 // server.js
-
 import express from "express";
-import cors from "cors"; // Install via: npm install cors
 import { MongoClient, ObjectId } from "mongodb";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -12,11 +10,24 @@ const port = process.env.PORT || 3000;
 
 // 2. Middleware
 app.use(express.json());
-app.use(cors()); // Enable CORS so that the frontend (even on a different origin) can access the API
 
-// Logger middleware to log every request
+// Manual CORS Middleware
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  res.header("Access-Control-Allow-Origin", "*"); // Allow all origins; change as needed.
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
