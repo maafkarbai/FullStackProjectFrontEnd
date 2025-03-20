@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Manual CORS Middleware
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Allow all origins; change as needed.
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
@@ -38,7 +38,9 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 // 4. MongoDB connection setup
 // Use process.env.MONGODB_URI (for Atlas) or fallback to local MongoDB
-const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
+const uri =
+  process.env.MONGODB_URI ||
+  "mongodb+srv://abdulla:Abdulla123@cluster0.h8xjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
 
 // 5. Declare collections (to be set after connection)
@@ -52,7 +54,7 @@ async function run() {
     console.log("Connected to MongoDB");
 
     // Use the exact database name (adjust if needed)
-    const database = client.db("School__Activities");
+    const database = client.db("After_School");
     lessonsCollection = database.collection("lessons");
     ordersCollection = database.collection("orders");
 
