@@ -498,7 +498,9 @@
         methods: {
           async fetchLessons() {
             try {
-              const response = await fetch("http://localhost:3000/lessons");
+              const response = await fetch(
+                "https://fullstackprojectbackend-tt3a.onrender.com/lessons"
+              );
               if (!response.ok) throw new Error("Failed to fetch lessons");
               const data = await response.json();
               this.lessons = data.map((lesson) => ({
@@ -634,11 +636,14 @@
             };
 
             try {
-              const response = await fetch("http://localhost:3000/orders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderPayload),
-              });
+              const response = await fetch(
+                "https://fullstackprojectbackend-tt3a.onrender.com/orders",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(orderPayload),
+                }
+              );
               if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || "Order submission failed");
