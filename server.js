@@ -37,7 +37,6 @@ const __dirname = path.dirname(__filename);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // 4. MongoDB connection setup
-// Use process.env.MONGODB_URI (for Atlas) or fallback to local MongoDB
 const uri =
   process.env.MONGODB_URI ||
   "mongodb+srv://abdulla:Abdulla123@cluster0.h8xjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
