@@ -17,7 +17,6 @@
       <header
         class="flex items-center p-4 justify-between flex-wrap mx-auto fixed top-0 w-full bg-white z-10 shadow-md"
       >
-        <!-- Clickable Logo -->
         <div class="logo flex gap-2 items-center">
           <a href="#" @click.prevent="goToHome" class="flex items-center gap-2">
             <i class="fa-solid fa-baseball-bat-ball"></i>
@@ -385,6 +384,7 @@
     </footer>
 
     <script>
+      let debounceTimer;
       new Vue({
         el: "#app",
         data: {
@@ -408,6 +408,7 @@
           lessons: [],
           products: [], // fallback if needed
         },
+
         computed: {
           totalAmount() {
             return this.cart.reduce(
@@ -491,6 +492,29 @@
               });
             }
             return products;
+          },
+        },
+        watch: {
+          searchQuery(newQuery) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              if (!newQuery) {
+                this.fetchLessons();
+              } else {
+                fetch(
+                  `https://fullstackprojectbackend-tt3a.onrender.com/search?q=${encodeURIComponent(
+                    newQuery
+                  )}`
+                )
+                  .then((res) => res.json())
+                  .then((data) => {
+                    this.lessons = data;
+                  })
+                  .catch((err) => {
+                    console.error("Search error:", err);
+                  });
+              }
+            }, 400); // delay in ms
           },
         },
         methods: {
@@ -622,7 +646,6 @@
             });
           },
           async submitOrder() {
-            // Prepare the order payload
             const orderPayload = {
               firstName: this.order.firstName,
               lastName: this.order.lastName,
