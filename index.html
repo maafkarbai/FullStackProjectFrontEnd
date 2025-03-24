@@ -403,10 +403,7 @@
           sortOrder: "asc",
           checkoutPage: false,
           orderSubmitted: false,
-          showPopup: false,
-          popupMessage: "",
           lessons: [],
-          products: [], // fallback if needed
         },
 
         computed: {
@@ -465,8 +462,7 @@
           },
           filteredProducts() {
             const query = this.searchQuery.toLowerCase();
-            let data = this.lessons.length ? this.lessons : this.products;
-            return data.filter(
+            return this.lessons.filter(
               (product) =>
                 product.LessonName.toLowerCase().includes(query) ||
                 product.Location.toLowerCase().includes(query) ||
@@ -480,7 +476,6 @@
               products.sort((a, b) => {
                 let valueA = a[this.sortAttribute];
                 let valueB = b[this.sortAttribute];
-                // Handle strings vs numbers
                 if (typeof valueA === "string") {
                   return this.sortOrder === "asc"
                     ? valueA.localeCompare(valueB)
@@ -514,7 +509,7 @@
                     console.error("Search error:", err);
                   });
               }
-            }, 400); // delay in ms
+            }, 400);
           },
         },
         methods: {
@@ -525,7 +520,6 @@
               );
               if (!response.ok) throw new Error("Failed to fetch lessons");
               const data = await response.json();
-              // Each lesson has _id, so store initialSpace
               this.lessons = data.map((lesson) => ({
                 ...lesson,
                 initialSpace: lesson.Space,
@@ -540,15 +534,12 @@
                 (item) => item._id === product._id
               );
               if (existingCartItem) {
-                // Increase quantity if still available
                 if (existingCartItem.quantity < product.initialSpace) {
                   existingCartItem.quantity++;
                 }
               } else {
-                // Push a new cart item
                 this.cart.push({ ...product, quantity: 1 });
               }
-              // Recalculate product.Space based on how many are in cart
               const qtyInCart = this.cart
                 .filter((item) => item._id === product._id)
                 .reduce((acc, curr) => acc + curr.quantity, 0);
@@ -558,10 +549,7 @@
           updateCart(productId, newQuantity) {
             let cartItem = this.cart.find((item) => item._id === productId);
             if (!cartItem) return;
-            // Find the matching lesson
-            let product = (
-              this.lessons.length ? this.lessons : this.products
-            ).find((p) => p._id === productId);
+            let product = this.lessons.find((p) => p._id === productId);
             if (!product) return;
             if (newQuantity < 1) {
               this.removeCartItem(this.cart.indexOf(cartItem));
@@ -578,9 +566,7 @@
           },
           removeCartItem(index) {
             const cartItem = this.cart[index];
-            let product = (
-              this.lessons.length ? this.lessons : this.products
-            ).find((p) => p._id === cartItem._id);
+            let product = this.lessons.find((p) => p._id === cartItem._id);
             if (product) {
               let qtyInCart = 0;
               this.cart.forEach((item) => {
@@ -595,9 +581,7 @@
           incrementCartItem(productId) {
             let cartItem = this.cart.find((item) => item._id === productId);
             if (!cartItem) return;
-            let product = (
-              this.lessons.length ? this.lessons : this.products
-            ).find((p) => p._id === productId);
+            let product = this.lessons.find((p) => p._id === productId);
             if (!product) return;
             if (cartItem.quantity < product.initialSpace) {
               this.updateCart(productId, cartItem.quantity + 1);
@@ -656,7 +640,6 @@
               zip: this.order.zip,
               gift: this.order.gift,
               lessons: this.cart.map((item) => ({
-                // pass `_id` as `id` because server expects `orderItem.id`
                 id: item._id,
                 quantity: item.quantity,
               })),
@@ -690,7 +673,6 @@
                 method: "",
               };
               this.checkoutPage = false;
-              // Refresh lessons to update available slots
               await this.fetchLessons();
             } catch (error) {
               console.error("Error submitting order:", error);
