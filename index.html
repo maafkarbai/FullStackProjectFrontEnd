@@ -372,16 +372,17 @@
         </div>
       </transition>
     </div>
-    <button
-      class="w-full p-6 bg-gray-700 text-xl text-white hover:underline hover:bg-gray-800 cursor-pointer fixed bottom-0 left-0 right-0 z-50"
-      @click="scrollToTop"
-      aria-label="Scroll to top"
-    >
-      Go to Top
-    </button>
 
     <!-- Footer -->
-    <footer class="mt-6"></footer>
+    <footer class="mt-6">
+      <button
+        class="w-full p-6 bg-gray-700 text-xl text-white hover:underline hover:bg-gray-800 cursor-pointer"
+        @click="scrollToTop"
+        aria-label="Scroll to top"
+      >
+        Go to Top
+      </button>
+    </footer>
 
     <script>
       let debounceTimer;
