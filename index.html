@@ -15,6 +15,7 @@
   <body>
     <div id="app">
       <header
+        id="site-header"
         class="flex items-center p-4 justify-between flex-wrap mx-auto fixed top-0 w-full bg-white z-10 shadow-md"
       >
         <div class="logo flex gap-2 items-center">
@@ -375,7 +376,7 @@
     <!-- Footer -->
     <footer class="mt-6">
       <button
-        class="w-full p-6 bg-gray-700 text-xl text-white hover:underline hover:bg-gray-800 cursor-pointer"
+        class="w-full p-6 bg-gray-700 text-xl text-white hover:underline hover:bg-gray-800 cursor-pointer fixed bottom-0 left-0 right-0 z-50"
         @click="scrollToTop"
         aria-label="Scroll to top"
       >
