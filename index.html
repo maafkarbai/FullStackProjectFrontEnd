@@ -389,6 +389,7 @@
       new Vue({
         el: "#app",
         data: {
+          showScrollToTop: false,
           order: {
             firstName: "",
             lastName: "",
@@ -520,6 +521,9 @@
           },
         },
         methods: {
+          handleScroll() {
+            this.showScrollToTop = window.scrollY > 300;
+          },
           async fetchLessons() {
             try {
               const response = await fetch(
@@ -691,7 +695,11 @@
           },
         },
         mounted() {
+          window.addEventListener("scroll", this.handleScroll);
           this.fetchLessons();
+        },
+        beforeDestroy() {
+          window.removeEventListener("scroll", this.handleScroll);
         },
       });
     </script>
