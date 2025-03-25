@@ -471,22 +471,28 @@
             );
           },
           sortedProducts() {
-            let products = [...this.filteredProducts];
-            if (this.sortAttribute) {
-              products.sort((a, b) => {
-                let valueA = a[this.sortAttribute];
-                let valueB = b[this.sortAttribute];
-                if (typeof valueA === "string") {
-                  return this.sortOrder === "asc"
-                    ? valueA.localeCompare(valueB)
-                    : valueB.localeCompare(valueA);
-                }
-                return this.sortOrder === "asc"
-                  ? valueA - valueB
-                  : valueB - valueA;
-              });
+            let products = this.filteredProducts;
+
+            if (!this.sortAttribute) {
+              return products;
             }
-            return products;
+
+            return products.slice().sort((a, b) => {
+              let valA = a[this.sortAttribute];
+              let valB = b[this.sortAttribute];
+
+              // Convert to lower case if string
+              if (typeof valA === "string" && typeof valB === "string") {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+                return this.sortOrder === "asc"
+                  ? valA.localeCompare(valB)
+                  : valB.localeCompare(valA);
+              }
+
+              // Compare as numbers
+              return this.sortOrder === "asc" ? valA - valB : valB - valA;
+            });
           },
         },
         watch: {
