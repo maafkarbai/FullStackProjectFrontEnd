@@ -371,23 +371,25 @@
           </div>
         </div>
       </transition>
-      <!-- Scroll To Top Button -->
-      <button
-        v-if="showScrollToTop"
-        class="fixed bottom-6 right-6 bg-black text-white text-xl p-4 rounded-full shadow-md hover:bg-gray-800 z-50"
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-6 w-full">
+      <a
+        href="#"
+        class="block w-full p-6 bg-gray-700 text-xl text-white hover:underline hover:bg-gray-800 cursor-pointer text-center"
         @click="scrollToTop"
         aria-label="Scroll to top"
       >
-        ⬆️
-      </button>
-    </div>
+        Go to Top
+      </a>
+    </footer>
 
     <script>
       let debounceTimer;
       new Vue({
         el: "#app",
         data: {
-          showScrollToTop: false,
           order: {
             firstName: "",
             lastName: "",
@@ -519,9 +521,6 @@
           },
         },
         methods: {
-          handleScroll() {
-            this.showScrollToTop = window.scrollY > 300;
-          },
           async fetchLessons() {
             try {
               const response = await fetch(
@@ -693,11 +692,7 @@
           },
         },
         mounted() {
-          window.addEventListener("scroll", this.handleScroll);
           this.fetchLessons();
-        },
-        beforeDestroy() {
-          window.removeEventListener("scroll", this.handleScroll);
         },
       });
     </script>
