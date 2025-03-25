@@ -371,18 +371,16 @@
           </div>
         </div>
       </transition>
-    </div>
-
-    <!-- Footer -->
-    <footer class="mt-6">
+      <!-- Scroll To Top Button -->
       <button
-        class="w-full p-6 bg-gray-700 text-xl text-white hover:underline hover:bg-gray-800 cursor-pointer"
+        v-if="showScrollToTop"
+        class="fixed bottom-6 right-6 bg-black text-white text-xl p-4 rounded-full shadow-md hover:bg-gray-800 z-50"
         @click="scrollToTop"
         aria-label="Scroll to top"
       >
-        Go to Top
+        ⬆️
       </button>
-    </footer>
+    </div>
 
     <script>
       let debounceTimer;
