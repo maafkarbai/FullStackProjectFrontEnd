@@ -611,14 +611,44 @@
             let product = this.lessons.find((p) => p._id === productId);
             if (!product) return;
             if (cartItem.quantity < product.initialSpace) {
-              this.updateCart(productId, cartItem.quantity + 1);
+              fetch(
+                `https://fullstackprojectbackend-tt3a.onrender.com/lessons/${productId}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ $inc: { Space: -1 } }),
+                }
+              )
+                .then((res) => res.json())
+                .then(() => {
+                  this.updateCart(productId, cartItem.quantity + 1);
+                })
+                .catch((err) => {
+                  console.error("Failed to decrease space:", err);
+                  alert("Unable to add more to cart. Try again.");
+                });
             }
           },
           decrementCartItem(productId) {
             let cartItem = this.cart.find((item) => item._id === productId);
             if (!cartItem) return;
             if (cartItem.quantity > 1) {
-              this.updateCart(productId, cartItem.quantity - 1);
+              fetch(
+                `https://fullstackprojectbackend-tt3a.onrender.com/lessons/${productId}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ $inc: { Space: 1 } }),
+                }
+              )
+                .then((res) => res.json())
+                .then(() => {
+                  this.updateCart(productId, cartItem.quantity - 1);
+                })
+                .catch((err) => {
+                  console.error("Failed to restore space:", err);
+                  alert("Unable to update cart. Try again.");
+                });
             } else {
               const idx = this.cart.findIndex((item) => item._id === productId);
               if (idx !== -1) {
