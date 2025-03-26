@@ -584,7 +584,26 @@
               });
               product.Space = product.initialSpace - qtyInCart;
             }
-            this.cart.splice(index, 1);
+            const quantityToRestore = cartItem.quantity;
+
+            // Update lesson availability in DB
+            fetch(
+              `https://fullstackprojectbackend-tt3a.onrender.com/lessons/${cartItem._id}`,
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ $inc: { Space: quantityToRestore } }),
+              }
+            )
+              .then((res) => res.json())
+              .then(() => {
+                this.cart.splice(index, 1);
+                this.fetchLessons(); // Optional: refresh availability
+              })
+              .catch((err) => {
+                console.error("Failed to update lesson space on removal:", err);
+                alert("Error updating lesson availability. Try again.");
+              });
           },
           incrementCartItem(productId) {
             let cartItem = this.cart.find((item) => item._id === productId);

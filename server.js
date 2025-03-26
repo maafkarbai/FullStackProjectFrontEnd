@@ -129,10 +129,18 @@ async function run() {
       try {
         const lessonId = req.params.id;
         const updateData = req.body;
+        let updateQuery = {};
+        if (updateData.$inc) updateQuery.$inc = updateData.$inc;
+        if (updateData.$set) updateQuery.$set = updateData.$set;
+        if (!updateQuery.$set && !updateQuery.$inc) {
+          updateQuery.$set = updateData;
+        }
+
         const result = await lessonsCollection.updateOne(
           { _id: new ObjectId(lessonId) },
-          { $set: updateData }
+          updateQuery
         );
+
         if (result.matchedCount === 0) {
           return res.status(404).json({ error: "Lesson not found" });
         }
