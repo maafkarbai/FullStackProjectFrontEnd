@@ -84,7 +84,7 @@
               <div class="card-section">
                 <img
                   class="object-cover w-64 h-64 mx-auto"
-                  :src="'images/' + product.LessonImage"
+                  :src="product.LessonImage"
                   :alt="product.LessonName + ' Lesson Image'"
                 />
                 <h2 class="text-2xl text-center">{{ product.LessonName }}</h2>
@@ -302,10 +302,11 @@
                             >
                               <span>
                                 <img
-                                  :src="'images/' + cartItem.LessonImage"
+                                  :src="cartItem.LessonImage"
                                   :alt="cartItem.LessonName + ' Image'"
                                   class="w-4 object-cover"
                                 />
+
                                 {{ cartItem.LessonName }}
                               </span>
                               <!-- Minus Button -->
