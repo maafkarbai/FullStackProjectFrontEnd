@@ -193,9 +193,9 @@
                 <div class="form-group flex flex-col gap-2">
                   <label for="zip" class="font-semibold">Zip Code</label>
                   <input
-                    type="number"
+                    type="text"
                     id="zip"
-                    v-model.number="order.zip"
+                    v-model="order.zip"
                     class="p-2 border rounded"
                     :required="order.method === 'Home Delivery'"
                     aria-required="true"
