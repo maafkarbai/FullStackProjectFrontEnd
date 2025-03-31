@@ -148,7 +148,7 @@
                   <input
                     type="text"
                     id="firstName"
-                    v-model="order.firstName"
+                    v-model.trim="order.firstName"
                     required
                     class="p-2 border rounded"
                     aria-required="true"
@@ -165,7 +165,7 @@
                   <input
                     type="text"
                     id="lastName"
-                    v-model="order.lastName"
+                    v-model.trim="order.lastName"
                     required
                     class="p-2 border rounded"
                     aria-required="true"
@@ -184,7 +184,7 @@
                   <textarea
                     id="address"
                     rows="4"
-                    v-model="order.address"
+                    v-model.trim="order.address"
                     class="p-2 border rounded"
                     :required="order.method === 'Home Delivery'"
                     aria-required="true"
@@ -195,7 +195,7 @@
                   <input
                     type="number"
                     id="zip"
-                    v-model="order.zip"
+                    v-model.number="order.zip"
                     class="p-2 border rounded"
                     :required="order.method === 'Home Delivery'"
                     aria-required="true"
@@ -212,7 +212,7 @@
                   <input
                     type="tel"
                     id="phone"
-                    v-model="order.phone"
+                    v-model.trim="order.phone"
                     pattern="[0-9]{7,15}"
                     title="Please enter a valid phone number (7 to 15 digits)"
                     required
@@ -233,6 +233,8 @@
                       id="gift"
                       v-model="order.gift"
                       class="form-checkbox"
+                      :true-value="'Send as a gift'"
+                      :false-value="'Do not send as a gift'"
                     />
                     <span class="text-lg">As a Gift? 🎁</span>
                   </label>
