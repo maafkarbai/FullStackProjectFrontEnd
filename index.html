@@ -439,10 +439,10 @@
             return phoneRegex.test(this.order.phone);
           },
           validFirstName() {
-            return /^[A-Za-z]+$/.test(this.order.firstName.trim());
+            return /^[A-Za-z ]+$/.test(this.order.firstName.trim());
           },
           validLastName() {
-            return /^[A-Za-z]+$/.test(this.order.lastName.trim());
+            return /^[A-Za-z ]+$/.test(this.order.lastName.trim());
           },
           checkoutEnabled() {
             if (
