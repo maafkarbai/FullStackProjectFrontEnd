@@ -42,23 +42,7 @@
           Checkout ({{ cart.length }})
         </button>
       </header>
-      <div
-        class="button-container"
-        style="display: flex; gap: 1rem; margin-top: 20px"
-      >
-        <button
-          onclick="window.open('/lessons', '_blank')"
-          style="padding: 10px 20px"
-        >
-          View Lessons
-        </button>
-        <button
-          onclick="window.open('/orders', '_blank')"
-          style="padding: 10px 20px"
-        >
-          View Orders
-        </button>
-      </div>
+
       <main class="pt-24 mx-auto px-4 max-w-[890px]">
         <!-- Lessons Section -->
         <div v-if="!checkoutPage">
