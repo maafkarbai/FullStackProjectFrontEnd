@@ -62,6 +62,17 @@ async function run() {
       }
     });
 
+    // GET /orders – return all orders
+    app.get("/orders", async (req, res) => {
+      try {
+        const orders = await ordersCollection.find({}).toArray();
+        res.json(orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).json({ error: "Failed to fetch orders" });
+      }
+    });
+
     // POST /orders – create a new order
     app.post("/orders", async (req, res) => {
       try {
