@@ -16,4 +16,4 @@ Link to Hosted Frontend (GitHub Pages): https://maafkarbai.github.io/FullStackPr
 
 Link to Lessons json (Render): https://fullstackprojectbackend-tt3a.onrender.com/lessons
 
-Link to Lessons json (Render): https://fullstackprojectbackend-tt3a.onrender.com/orders
+Link to Orders json (Render): https://fullstackprojectbackend-tt3a.onrender.com/orders
