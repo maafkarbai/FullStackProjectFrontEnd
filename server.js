@@ -53,6 +53,16 @@ async function run() {
     lessonsCollection = database.collection("lessons");
     ordersCollection = database.collection("orders");
 
+    app.get("/", (req, res) => {
+      res.send(`
+    <h1>Welcome to the Backend Server</h1>
+    <ul>
+      <li><a href="/orders">Go to Orders</a></li>
+      <li><a href="/lessons">Go to Lessons</a></li>
+    </ul>
+  `);
+    });
+
     // GET /lessons – return raw docs (with native _id)
     app.get("/lessons", async (req, res) => {
       try {
