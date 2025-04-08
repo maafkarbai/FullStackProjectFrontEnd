@@ -361,6 +361,10 @@
                   >
                     Checkout ➡️
                   </button>
+                  <!-- Display an informational message when the form is incomplete -->
+                  <div v-if="!isFormValid" class="text-red-500 text-sm mt-2">
+                    Please fill in all required fields to place an order.
+                  </div>
                 </div>
               </div>
             </form>
